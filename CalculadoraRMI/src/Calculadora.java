@@ -1,8 +1,20 @@
 
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
 public class Calculadora extends javax.swing.JFrame {
     
-    public Calculadora() {
+    private static ICalculadoraRMI look_up;
+    
+    public Calculadora() throws NotBoundException, MalformedURLException, RemoteException {
         initComponents();
+        
+        look_up = (ICalculadoraRMI) Naming.lookup("//localhost/CalculadoraOnline");
     }
 
     @SuppressWarnings("unchecked")
@@ -130,12 +142,16 @@ public class Calculadora extends javax.swing.JFrame {
 
     private void jbnSomarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbnSomarMouseClicked
         // TODO add your handling code here:
-        double num1, num2, operacao;
+        double num1, num2, operacao = 0;
         
         lblSinal.setText("+");
         num1 = Double.parseDouble(jTextField1.getText());
         num2 = Double.parseDouble(jTextField2.getText());
-        operacao = num1 + num2;
+        try {
+            operacao = look_up.somar(num1, num2);
+        } catch (RemoteException ex) {
+            Logger.getLogger(Calculadora.class.getName()).log(Level.SEVERE, null, ex);
+        }
         jTextField3.setText(String.valueOf(operacao));
         desativaBotoes();
         
@@ -143,12 +159,16 @@ public class Calculadora extends javax.swing.JFrame {
 
     private void jbnSubtrairMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbnSubtrairMouseClicked
         // TODO add your handling code here:
-        double num1, num2, operacao;
+        double num1, num2, operacao = 0;
         
         lblSinal.setText("-");
         num1 = Double.parseDouble(jTextField1.getText());
         num2 = Double.parseDouble(jTextField2.getText());
-        operacao = num1 - num2;
+        try {
+            operacao = look_up.subtrair(num1, num2);
+        } catch (RemoteException ex) {
+            Logger.getLogger(Calculadora.class.getName()).log(Level.SEVERE, null, ex);
+        }
         jTextField3.setText(String.valueOf(operacao));
         desativaBotoes();
         
@@ -156,24 +176,32 @@ public class Calculadora extends javax.swing.JFrame {
 
     private void jbnMultiplicarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbnMultiplicarMouseClicked
         // TODO add your handling code here:
-        double num1, num2, operacao;
+        double num1, num2, operacao = 0;
         
         lblSinal.setText("X");
         num1 = Double.parseDouble(jTextField1.getText());
         num2 = Double.parseDouble(jTextField2.getText());
-        operacao = num1 * num2;
+        try {
+            operacao = look_up.multiplicar(num1, num2);
+        } catch (RemoteException ex) {
+            Logger.getLogger(Calculadora.class.getName()).log(Level.SEVERE, null, ex);
+        }
         jTextField3.setText(String.valueOf(operacao));
         desativaBotoes();
     }//GEN-LAST:event_jbnMultiplicarMouseClicked
 
     private void jbnDividirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbnDividirMouseClicked
         // TODO add your handling code here:
-        double num1, num2, operacao;
+        double num1, num2, operacao = 0;
         
         lblSinal.setText("/");
         num1 = Double.parseDouble(jTextField1.getText());
         num2 = Double.parseDouble(jTextField2.getText());
-        operacao = num1 / num2;
+        try {
+            operacao = look_up.dividir(num1, num2);
+        } catch (RemoteException ex) {
+            Logger.getLogger(Calculadora.class.getName()).log(Level.SEVERE, null, ex);
+        }
         jTextField3.setText(String.valueOf(operacao));
         desativaBotoes();
     }//GEN-LAST:event_jbnDividirMouseClicked
@@ -191,7 +219,15 @@ public class Calculadora extends javax.swing.JFrame {
         
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Calculadora().setVisible(true);
+                try {
+                    new Calculadora().setVisible(true);
+                } catch (NotBoundException ex) {
+                    Logger.getLogger(Calculadora.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(Calculadora.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(Calculadora.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
